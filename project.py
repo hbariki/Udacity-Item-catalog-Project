@@ -97,7 +97,7 @@ def gconnect():
     # Store the access token in the session for later use.
     login_session['provider'] = 'google'
     login_session['access_token'] = credentials.access_token
-    login_session['gplus_id'] = 'gplus_id'
+    login_session['gplus_id'] = gplus_id
     response = make_response(json.dumps('Succesfully connected users', 200))
 
     # Get user info
@@ -187,7 +187,7 @@ def logout():
         if login_session['provider'] == 'google':
             gdisconnect()
             del login_session['gplus_id']
-            del login_session['access_token']
+            del login_session['credentials.access_token']
         del login_session['username']
         del login_session['email']
         del login_session['picture']
