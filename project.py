@@ -16,7 +16,6 @@ import json
 from flask import make_response
 import requests
 
-
 app = Flask(__name__)
 
 CLIENT_ID = json.loads(open('client_secrets.json', 'r').read())['web']['client_id']
@@ -30,6 +29,8 @@ session = DBsession()
 
 # create a state token to request forgery.
 # store it in the session for later validation
+
+
 @app.route('/login')
 def showlogin():
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
@@ -94,8 +95,10 @@ def gconnect():
         return response
 
     # Store the access token in the session for later use.
+    login_session['provider'] = 'google'
     login_session['access_token'] = credentials.access_token
-    login_session['gplus_id'] = gplus_id
+    login_session['gplus_id'] = 'gplus_id'
+    response = make_response(json.dumps('Succesfully connected users', 200))
 
     # Get user info
     userinfo_url = "https://www.googleapis.com/oauth2/v1/userinfo"
@@ -177,6 +180,24 @@ def gdisconnect():
     	response = make_response(json.dumps('Failed to revoke token for given user.', 400))
     	response.headers['Content-Type'] = 'application/json'
     	return response
+
+@app.route('/logout')
+def logout():
+    if 'provider' in login_session:
+        if login_session['provider'] == 'google':
+            gdisconnect()
+            del login_session['gplus_id']
+            del login_session['access_token']
+        del login_session['username']
+        del login_session['email']
+        del login_session['picture']
+        del login_session['user_id']
+        del login_session['provider']
+        flash("you have succesfully been logout")
+        return redirect(url_for('showRestaurants'))
+    else:
+        flash("you were not logged in")
+        return redirect(url_for('showRestaurants'))
 
 
 # JSON APIs to view Restaurant Information
@@ -263,7 +284,7 @@ def showMenu(restaurant_id):
     creator = getUserInfo(restaurant.user_id)
     items = session.query(MenuItem).filter_by(restaurant_id = restaurant_id).all()
 
-    if 'username' not in login_session or creator.id != login_session['user_id']:
+    if 'username' not in login_session:
        return render_template('publicmenu.html', items = items, restaurant = restaurant, creator = creator)
     else:
        return render_template('menu.html', items=items, restaurant=restaurant, creator=creator)
