@@ -85,7 +85,7 @@ def gconnect():
         print "Token's client ID does not match app's."
         response.headers['Content-Type'] = 'application/json'
         return response
-
+    # Access token within the app
     stored_credentials = login_session.get('credentials')
     stored_gplus_id = login_session.get('gplus_id')
     if stored_credentials is not None and gplus_id == stored_gplus_id:
@@ -95,7 +95,7 @@ def gconnect():
         return response
 
     # Store the access token in the session for later use.
-    login_session['provider'] = 'google'
+
     login_session['access_token'] = credentials.access_token
     login_session['gplus_id'] = gplus_id
     response = make_response(json.dumps('Succesfully connected users', 200))
@@ -106,16 +106,21 @@ def gconnect():
     answer = requests.get(userinfo_url, params=params)
 
     data = answer.json()
-
+    login_session['provider'] = 'google'
     login_session['username'] = data['name']
     login_session['picture'] = data['picture']
     login_session['email'] = data['email']
 
     # See if user exists or if it doesn't make a new one
+    print 'User email is' +str(login_session['email'])
     user_id = getUserID(login_session['email'])
-    if not user_id:
+    if user_id:
+        print 'Existing user#' +str(user_id) +'matches this email'
+    else:
       user_id = createUser(login_session)
+      print 'New user_id#' +str(user_id)+ 'created'
     login_session['user_id'] = user_id
+    print 'Login session is tied to :id#' +str(login_session['user_id'])
 
     output = ''
     output += '<h1>Welcome, '
@@ -167,11 +172,11 @@ def gdisconnect():
     print 'result is'
     print result
     if result['status'] == '200':
-	del login_session['access_token']
-    	del login_session['gplus_id']
-    	del login_session['username']
-    	del login_session['email']
-    	del login_session['picture']
+	#del login_session['access_token']
+    	#del login_session['gplus_id']
+    	#del login_session['username']
+    	#del login_session['email']
+    	#del login_session['picture']
     	response = make_response(json.dumps('Successfully disconnected.'), 200)
     	response.headers['Content-Type'] = 'application/json'
     	return response
@@ -185,9 +190,9 @@ def gdisconnect():
 def logout():
     if 'provider' in login_session:
         if login_session['provider'] == 'google':
-            gdisconnect()
-            del login_session['gplus_id']
-            del login_session['access_token']
+          gdisconnect()
+          del login_session['gplus_id']
+          del login_session['access_token']
         del login_session['username']
         del login_session['email']
         del login_session['picture']
