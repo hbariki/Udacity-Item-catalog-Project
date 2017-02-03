@@ -1,11 +1,28 @@
 <!DOCTYPE html>
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+
 <html>
 <head>
-
-  <!--LOAD PRE-REQUISITES FOR GOOGLE SIGN IN -->
+<!--LOAD PRE-REQUISITES FOR GOOGLE SIGN IN -->
    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
 
    <script src="//apis.google.com/js/platform.js?onload=start"></script>
+   <div class="row top-menu">
+ 		<div class="col-md-10"></div>
+ 		<div class="col-md-2 text-right">
+ 					</div>
+ 	</div>
+ 	<div class="row divider blue">
+ 		<div class="col-md-12"></div>
+ 	</div>
+ 	<div class="row banner main">
+ 		<div class="col-md-1"></div>
+ 		<div class="col-md-11 padding-none">
+ 			<h1>Restaurants</h1>
+ 		</div>
+ 	</div>
 
 <!-- END PRE-REQUISITES FOR GOOGLE SIGN IN -->
 
@@ -30,6 +47,7 @@
             data-approvalprompt="force">
           </span>
         </div>
+      
 <div id="result"></div>
 
 <script>
@@ -68,3 +86,4 @@ function signInCallback(authResult) {
   </body>
 
   </html>
+  {% endblock %}

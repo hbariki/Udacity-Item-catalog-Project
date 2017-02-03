@@ -8,8 +8,8 @@
 		<div class="col-md-11 col-md-offset-1 padding-none">
 			<h1>{{ restaurant.name }}
 			<figure class="creator">
-				<img src="{{ url_for('static', filename='user.jpg') }}">
-				<figcaption>Harshini</figcaption>
+				<img src="{{ creator.picture }}">
+				<figcaption>{{creator.name}}</figcaption>
 			</figure>
 			</h1>
 
@@ -49,7 +49,7 @@
 					<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>Delete Restaurant
 				</button>
 			</a>
-			
+
 		</div>
 		<div class="col-md-7"></div>
 	</div>
